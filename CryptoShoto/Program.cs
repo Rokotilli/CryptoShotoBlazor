@@ -1,4 +1,4 @@
-using BLL.Contracts;
+﻿using BLL.Contracts;
 using BLL.Repositories;
 using DAL.DBContext;
 using Microsoft.AspNetCore.Identity;
@@ -6,8 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//builder.Services.AddControllers();
-//builder.Services.AddSwaggerGen();
+builder.Services.AddControllersWithViews();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<CSContext>(options =>
 {
@@ -33,29 +33,28 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
-//if (!app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
+app.Environment.EnvironmentName = "dev";
 
-//    app.UseSwaggerUI(options =>
-//    {
-//        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-//        options.RoutePrefix = string.Empty;
-//    });
+if (!app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
 
-//    app.UseHsts();
-//}
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+        options.RoutePrefix = string.Empty;
+    });
+
+    app.UseHsts();
+}
 
 app.UseHttpsRedirection();
 
-    app.UseRouting(); // ?????????? ??????? ?????????????
+app.UseRouting(); // используем систему маршрутизации
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
-});
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 //app.UseMvc(routes =>
 //{
