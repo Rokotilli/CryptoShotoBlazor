@@ -15,7 +15,12 @@ namespace DAL.Configurations
         public void Configure(EntityTypeBuilder<Follower> builder)
         {
             builder.ToTable("Followers")
-                .HasKey(f => new {f.FollowerId, f.IdleId});
+                .HasKey(f => f.Id);
+
+            builder.Property(l => l.Id)
+                .IsRequired()
+                .ValueGeneratedOnAdd()
+                .HasAnnotation("DatabaseGenerated", DatabaseGeneratedOption.Identity);
 
             builder.Property(f => f.FollowerId)
                 .IsRequired();
@@ -32,6 +37,9 @@ namespace DAL.Configurations
                 .WithMany()
                 .HasForeignKey(f => f.IdleId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasIndex(l => l.Id).IsUnique();
+            builder.HasIndex(l => new { l.FollowerId, l.IdleId }).IsUnique();
         }
     }
 }

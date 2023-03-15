@@ -1,28 +1,30 @@
+using BLL.Contracts;
+using BLL.Repositories;
 using DAL.DBContext;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddControllers();
+//builder.Services.AddSwaggerGen();
+
 builder.Services.AddDbContext<CSContext>(options =>
 {
     string? connectionString = builder.Configuration.GetConnectionString("MSSQLConnection");
     options.UseSqlServer(connectionString);
 });
 
-//builder.Services.AddScoped<IEFCoinRepository, EFCoinsRepository>();
-//builder.Services.AddScoped<IEFMiddleRepository, EFMiddleRepository>();
-//builder.Services.AddScoped<IEFWalletsRepository, EFWalletsRepository>();
-//builder.Services.AddScoped<IEFUsersRepository, EFUsersRepository>();
-//builder.Services.AddScoped<IEFUnitOfWork, EFUnitOfWork>();
-
-//builder.Services.AddScoped<ICoinManager, CoinManager>();
-//builder.Services.AddScoped<IMiddleManager, MiddleManager>();
-//builder.Services.AddScoped<IUserManager, UserManager>();
-//builder.Services.AddScoped<IWalletManager, WalletManager>();
-//builder.Services.AddScoped<IDataManager, DataManager>();
+builder.Services.AddScoped<ICoinRepository, CoinRepository>();
+builder.Services.AddScoped<IWalletRepository, WalletRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<ILikeRepository, LikeRepository>();
+builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<INewsRepository, NewsRepository>();
+builder.Services.AddScoped<IFollowerRepository, FollowerRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 //builder.Services.AddScoped<MapperService>();
 //builder.Services.AddScoped<WalletValidation>();
 //builder.Services.AddScoped<CoinValidation>();
@@ -31,22 +33,35 @@ builder.Services.AddDbContext<CSContext>(options =>
 
 var app = builder.Build();
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
+//if (!app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
 
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-        options.RoutePrefix = string.Empty;
-    });
+//    app.UseSwaggerUI(options =>
+//    {
+//        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+//        options.RoutePrefix = string.Empty;
+//    });
 
-    app.UseHsts();
-}
+//    app.UseHsts();
+//}
 
 app.UseHttpsRedirection();
 
-app.MapControllers();
+    app.UseRouting(); // ?????????? ??????? ?????????????
 
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+});
+
+//app.UseMvc(routes =>
+//{
+//    routes.MapRoute(
+//        name: "default",
+//        template: "{controller=Home}/{action=Index}/{id?}");
+//});
 
 app.Run();
