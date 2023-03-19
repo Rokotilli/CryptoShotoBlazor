@@ -1,0 +1,32 @@
+﻿@page "/"
+@using DAL.Models
+@using CryptoBlazor.Services
+@inject NewsService newsService
+
+<h1>Добро пожаловать!</h1>
+
+@if (news == null)
+{
+    <p>Нету новостей сегодня</p>
+}
+
+else
+{
+    <div>
+        @foreach (var item in news)
+        {
+            <p>@item.Text</p>
+        }
+    </div>
+}
+
+@code {
+    List<News>? news;
+
+    protected override async Task OnInitializedAsync()
+    {
+        IEnumerable<News> ne = await newsService.GetNews();
+        news = ne.ToList();
+    }
+}
+

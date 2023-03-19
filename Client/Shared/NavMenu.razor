@@ -1,0 +1,30 @@
+﻿<section class="first__section">
+			<header class="header">
+					<div class="header__logo_home">
+						<img src="img/First/logo.png" alt="" class="logo_img"> 
+					</div>
+
+					<nav class="header__nav_home">
+						<div class="nav_link_item_home">
+							<a href="/" class="nav__links_home">Home</a>
+							<a href="#" class="nav__links_home">Wallet</a>
+							<a href="/news" class="nav__links_home">News</a>
+							<a href="/posts" class="nav__links_home">Posts</a>
+						</div>
+						<div class="logo_button_home">
+							<a href="#" class="nav__links_home">Sign up</a>
+						</div>
+					</nav>
+				</header>
+</section>
+
+@*@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapsee" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}*@

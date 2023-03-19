@@ -22,12 +22,11 @@ namespace DAL.Configurations
                 .ValueGeneratedOnAdd()
                 .HasAnnotation("DatabaseGenerated", DatabaseGeneratedOption.Identity);
 
-            builder.Property(w => w.Text);
-
-
-            builder.Property(w => w.Media)
+            builder.Property(w => w.Text)
                 .HasMaxLength(100);
 
+            builder.Property(w => w.Media)
+                .HasMaxLength(300);
 
             builder.HasIndex(w => w.Id).IsUnique();
 

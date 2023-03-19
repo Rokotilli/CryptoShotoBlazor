@@ -3,11 +3,12 @@ using BLL.Repositories;
 using DAL.DBContext;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using CryptoShoto.DTO;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen();
+builder.Services.AddControllers();
 
 builder.Services.AddDbContext<CSContext>(options =>
 {
@@ -25,7 +26,8 @@ builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<INewsRepository, NewsRepository>();
 builder.Services.AddScoped<IFollowerRepository, FollowerRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-//builder.Services.AddScoped<MapperService>();
+
+builder.Services.AddScoped<DTOService>();
 //builder.Services.AddScoped<WalletValidation>();
 //builder.Services.AddScoped<CoinValidation>();
 //builder.Services.AddScoped<UserValidation>();
@@ -33,34 +35,18 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
-app.Environment.EnvironmentName = "dev";
+app.UseSwagger();
 
-if (!app.Environment.IsDevelopment())
+app.UseSwaggerUI(options =>
 {
-    app.UseSwagger();
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+    options.RoutePrefix = string.Empty;
+});
 
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-        options.RoutePrefix = string.Empty;
-    });
-
-    app.UseHsts();
-}
+app.UseHsts();
 
 app.UseHttpsRedirection();
 
-app.UseRouting(); // используем систему маршрутизации
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-//app.UseMvc(routes =>
-//{
-//    routes.MapRoute(
-//        name: "default",
-//        template: "{controller=Home}/{action=Index}/{id?}");
-//});
+app.MapControllers();
 
 app.Run();

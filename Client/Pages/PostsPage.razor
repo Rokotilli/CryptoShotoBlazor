@@ -1,0 +1,68 @@
+﻿@page "/posts"
+@using Client.Services
+@using CryptoShoto.DTO;
+@using DAL.Models;
+@inject PostService postService
+
+<PageTitle>Posts</PageTitle>
+
+<div class="form-group">
+    <label for="Text">Text:</label>
+    <input type="text" id="Text" class="form-control" @bind="@post.Text" />
+</div>
+
+<div class="form-group">
+    <label for="Photo">Photo:</label>
+    <input type="text" id="Photo" class="form-control" @bind="@post.Photo" />
+</div>
+
+<button class="btn btn-primary" @onclick="@CreatePost">Create</button>
+
+<div class="form-group">
+    <label for="Id">Id:</label>
+    <input type="text" id="Id" class="form-control" @bind="@id" />
+</div>
+<button class="btn btn-primary" @onclick="@DeletePost">Delete</button>
+
+
+<br>
+<br>
+<br>
+<br>
+
+<button class="btn btn-primary" @onclick="@OnKeyDown">Show</button>
+<ul>
+    @if (posts != null && posts.Any())
+    {
+        @foreach (var item in posts)
+        {
+            <li>@item.Text</li>
+        }
+    }
+    else
+    {
+        <li>No posts found.</li>
+    }
+</ul>
+
+
+@code {
+    private PostDTO post = new PostDTO();
+    private int id;
+
+    private List<PostDTO> posts;
+    private async Task CreatePost()
+    {
+        await postService.AddPost(post);
+    }
+
+    private async Task DeletePost()
+    {
+        await postService.DeletePost(id);
+    }
+
+    private async Task OnKeyDown()
+    {
+        posts = await postService.GetAllPostsByUser(3);
+    }
+}

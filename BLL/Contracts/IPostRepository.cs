@@ -9,6 +9,6 @@ namespace BLL.Contracts
 {
     public interface IPostRepository : IGenericRepository<Post>
     {
-
+        Task<IQueryable<Post>> PostGetByUserId(int id);
     }
 }

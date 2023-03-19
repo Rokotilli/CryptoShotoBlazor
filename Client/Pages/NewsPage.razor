@@ -1,0 +1,38 @@
+﻿@page "/news"
+@using Client.Services
+@using DAL.Models
+@inject NewsService newsService
+
+<PageTitle>News</PageTitle>
+
+@if (news == null)
+{
+    <p>Loading...</p>
+}
+else{
+    <section>
+	<div class="container">
+			<div class="rightside_home">
+				<div class="news_home">
+					<div class="intro_title_home">
+						@foreach(var item in news){
+							<p>@item.Text</p>
+							<img src="@item.Media"/>
+						}
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+}
+
+@code{
+	List<News> news;
+
+	protected override async Task OnInitializedAsync(){
+		IEnumerable<News> n = await newsService.GetNews();
+
+		news = n.ToList();
+	}
+}
+

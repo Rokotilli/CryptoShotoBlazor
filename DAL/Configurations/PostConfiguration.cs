@@ -23,7 +23,7 @@ namespace DAL.Configurations
                 .HasAnnotation("DatabaseGenerated", DatabaseGeneratedOption.Identity);
 
             builder.Property(w => w.Text)
-                .HasMaxLength(1000);
+                .HasMaxLength(100);
 
             builder.Property(w => w.Photo)
                 .HasMaxLength(100);

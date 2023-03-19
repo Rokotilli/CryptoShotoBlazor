@@ -1,0 +1,213 @@
+ Указываем box sizing */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Убираем внутренние отступы */
+ul[class],
+ol[class] {
+  padding: 0;
+}
+
+/* Убираем внешние отступы */
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul[class],
+ol[class],
+li,
+figure,
+figcaption,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+/* Выставляем основные настройки по-умолчанию для body */
+body {
+  min-height: 100vh;
+  scroll-behavior: smooth;
+  text-rendering: optimizeSpeed;
+  line-height: 1.5;
+}
+
+/* Удаляем стандартную стилизацию для всех ul и il, у которых есть атрибут class*/
+ul[class],
+ol[class] {
+  list-style: none;
+}
+
+/* Элементы a, у которых нет класса, сбрасываем до дефолтных стилей */
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+}
+
+/* Упрощаем работу с изображениями */
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Указываем понятную периодичность в потоке данных у article*/
+article > * + * {
+  margin-top: 1em;
+}
+
+/* Наследуем шрифты для инпутов и кнопок */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Удаляем все анимации и переходы для людей, которые предпочитай их не использовать */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+
+.container {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.intro__item__line {
+display: flex;
+justify-content: center;
+}
+
+.line {
+  width: 25%;
+  margin-right: 30px;
+
+  font-family: 'Montserrat', sans-serif;
+  text-transform: uppercase;
+  font-size: 14px;
+  color: #fff;
+
+}
+
+.line:last-child {
+  margin-right: 0;
+}
+
+
+.line::before {
+  display: inline-block;
+    content: "";
+    border-top: 4px solid rgba(255, 255, 255, 1);
+    opacity: 0.8;
+    width: 280px;
+    transform: translateY(-1rem);
+}
+
+
+.line:first-child::before {
+  opacity: 1;
+}
+
+.line span {
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.number {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+}
+
+.logo_button{
+  width: 100px;
+  background-color: #CD853F;
+   border-radius: 10px;
+   margin-left: 120px;
+   text-align: center;
+   color: black;
+}
+
+.leftside {
+    width: 100%;
+    height: 350px;
+    display: flex;
+    justify-content: space-between;
+    text-align: left;
+    align-items: center;
+    color: black;
+}
+
+.rightside {
+    background-color:black;
+    width: 100%;
+    height: 350px;
+    display: flex;
+    justify-content: space-between;
+    text-align: left;
+    align-items: center;
+    color: black;
+}
+
+.intro_item {
+}
+
+.intro__title {
+  font-size: 48px;
+  font-family: 'Nanum Gothic', sans-serif;
+}
+
+.intro__subtitle {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 48px;
+    text-transform: uppercase;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: 5px;
+    color: black;
+}
+
+.intro__button {
+    font-family: 'Montserrat', sans-serif;
+    text-decoration: none;
+    color: #fff;
+    font-size: 14px;
+    padding: 6px 10px;
+    text-transform: uppercase;
+    font-weight: 600;
+    border: 2px solid #fff;
+    transition: all .4s ease-in-out 0s;
+    color: black;
+}
+
+    .intro__button:hover {
+        background-color: #fff;
+        color: black;
+    }
+.intro_text{
+  text-transform: uppercase;
+  max-width: 340px;
+  font-family: 'Nanum Gothic', sans-serif;
+  word-spacing: 5px;
+}
+
+.first_up_home {
+    display: flex;
+    justify-content: space-between;
+}
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');

@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <None Remove="Controllers\NewFile.txt" />
+    <None Remove="DTO\NewFile.txt" />
+    <None Remove="DTO\PostDTO" />
     <None Remove="Views\Home\Index.html" />
     <None Remove="Views\Home\NewFile.txt" />
     <None Remove="Views\NewFile.txt" />
@@ -15,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

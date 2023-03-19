@@ -1,5 +1,4 @@
-﻿
-using BLL;
+﻿using BLL;
 using BLL.Contracts;
 using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +6,8 @@ using System;
 
 namespace Lab3.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class HomeController : Controller
     {
         public readonly IUnitOfWork unitOfWork;
@@ -16,6 +17,7 @@ namespace Lab3.Controllers
             this.unitOfWork = unitOfWork;
         }
 
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<Coin>>> Index()
         {
             var all = await unitOfWork.coinRepository.GetAllAsync();

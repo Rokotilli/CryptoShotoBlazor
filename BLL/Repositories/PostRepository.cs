@@ -12,4 +12,11 @@ public class PostRepository : GenericRepository<Post>, IPostRepository
     {
     }
 
+    public async Task<IQueryable<Post>> PostGetByUserId(int id)
+    {
+        var posts = databaseContext.Posts.Where(p => p.UserId == id);
+
+        return posts;
+    }
+
 }

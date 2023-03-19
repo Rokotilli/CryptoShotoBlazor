@@ -1,0 +1,7 @@
+﻿namespace CryptoShoto.DTO;
+
+public class PostDTO
+{
+    public string Text { get; set; }
+    public string Photo { get; set; }
+}
