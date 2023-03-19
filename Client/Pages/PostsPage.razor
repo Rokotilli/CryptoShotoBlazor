@@ -1,8 +1,13 @@
 ﻿@page "/posts"
 @using Client.Services
 @using CryptoShoto.DTO;
+@using System.Security.Claims;
 @using DAL.Models;
-@inject PostService postService
+@inject PostService postService;
+@inject LoginService loginService;
+@inject NavigationManager NavigationManager;
+@inject AuthenticationStateProvider authProvide;
+@attribute [Authorize]
 
 <PageTitle>Posts</PageTitle>
 
@@ -47,10 +52,18 @@
 
 
 @code {
+    protected override async Task OnInitializedAsync()
+{
+     if(await loginService.Bool()==false)
+     {
+         NavigationManager.NavigateTo("/login");
+     }
+}
     private PostDTO post = new PostDTO();
     private int id;
 
     private List<PostDTO> posts;
+
     private async Task CreatePost()
     {
         await postService.AddPost(post);
@@ -63,6 +76,6 @@
 
     private async Task OnKeyDown()
     {
-        posts = await postService.GetAllPostsByUser(3);
+        posts = await postService.GetAllPostsByUser();
     }
 }

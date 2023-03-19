@@ -5,7 +5,7 @@ namespace CryptoShoto.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class WalletController : Controller
+    public class WalletController : ControllerBase
     {
         public readonly IUnitOfWork unitOfWork;
 

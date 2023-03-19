@@ -2,6 +2,7 @@
 using BLL.Contracts;
 using CryptoShoto.DTO;
 using DAL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CryptoShoto.Controllers
@@ -27,11 +28,15 @@ namespace CryptoShoto.Controllers
             return Ok(model);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<PostDTO>> AddPost([FromBody] PostDTO model)
         {
             Post post = mapper.Map<Post>(model);
-            post.UserId = 3;
+
+            var modelUser = await unitOfWork.userRepository.SearchByEmail(HttpContext.User.Identity.Name);
+            
+            post.UserId = modelUser.Id;
             post.Date = DateTime.Now;
 
             await unitOfWork.postRepository.AddAsync(post);
@@ -49,14 +54,16 @@ namespace CryptoShoto.Controllers
             return Ok();
 		}
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<List<PostDTO>>> GetAllPostsByUserId(int id)
+        [HttpGet("myposts")]
+        public async Task<ActionResult<List<PostDTO>>> GetAllPostsByUserId()
         {
-            var model = await unitOfWork.postRepository.PostGetByUserId(id);
+            var modelUser = await unitOfWork.userRepository.SearchByEmail(HttpContext.User.Identity.Name);
 
-            List<Post>temp = model.ToList();
+            var model = await unitOfWork.postRepository.PostGetByUserId(modelUser.Id);   
 
-            return Ok(temp);
+            List<Post> temp = model.ToList();
+
+            return Ok();
         }
     }
 }

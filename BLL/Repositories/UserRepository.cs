@@ -12,4 +12,10 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     {
     }
 
+    public async Task<User> SearchByEmail(string email)
+    {
+        var user = databaseContext.Users.FirstOrDefault(u => u.Email == email);
+
+        return user;
+    }
 }

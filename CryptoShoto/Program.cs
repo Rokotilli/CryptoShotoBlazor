@@ -9,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
+builder.Services.AddAuthentication("Cookies").AddCookie();
+builder.Services.AddAuthorization();
 
 builder.Services.AddDbContext<CSContext>(options =>
 {
@@ -46,6 +48,9 @@ app.UseSwaggerUI(options =>
 app.UseHsts();
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

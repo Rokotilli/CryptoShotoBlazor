@@ -8,7 +8,7 @@ namespace Lab3.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class HomeController : Controller
+    public class HomeController : ControllerBase
     {
         public readonly IUnitOfWork unitOfWork;
 
@@ -22,7 +22,7 @@ namespace Lab3.Controllers
         {
             var all = await unitOfWork.coinRepository.GetAllAsync();
 
-            return View(all);
+            return Ok(all);
         }
     }
 }

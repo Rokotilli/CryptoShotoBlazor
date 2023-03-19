@@ -1,5 +1,6 @@
 using Client.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,11 @@ builder.Services.AddHttpClient<NewsService>(httpClient =>
 });
 
 builder.Services.AddHttpClient<PostService>(httpClient =>
+{
+    httpClient.BaseAddress = new Uri(builder.Configuration["ApiUrl"]);
+});
+
+builder.Services.AddHttpClient<LoginService>(httpClient =>
 {
     httpClient.BaseAddress = new Uri(builder.Configuration["ApiUrl"]);
 });

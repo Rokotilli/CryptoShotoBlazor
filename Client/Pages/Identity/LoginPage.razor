@@ -1,0 +1,28 @@
+﻿@page "/login"
+@using CryptoShoto.DTO;
+@using Client.Services;
+@inject LoginService loginService;
+
+<PageTitle>Login</PageTitle>
+
+<div class="form-group">
+    <label for="Email">Email:</label>
+    <input type="text" id="Email" class="form-control" @bind="@login.Email" />
+</div>
+
+<div class="form-group">
+    <label for="Password">Password:</label>
+    <input type="text" id="Password" class="form-control" @bind="@login.Password" />
+</div>
+
+<button class="btn btn-primary" @onclick="@Check">Login</button>
+
+
+@code {
+    private LoginDTO login = new LoginDTO();
+
+    private async Task Check()
+    {
+        await loginService.LoginSend(login);
+    }
+}

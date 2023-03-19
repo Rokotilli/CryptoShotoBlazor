@@ -14,7 +14,6 @@ public class NewsService
 
     public async Task<IEnumerable<News>> GetNews()
     {
-
 		return await httpClient.GetFromJsonAsync<IEnumerable<News>>("api/news");
 	}
 }
