@@ -20,11 +20,12 @@ namespace Client.Services
         
         public async Task<bool> Bool()
         {
-            var response = await httpClient.GetAsync("api/Profile/IsAuthenticated");
+            var response = await httpClient.GetAsync("api/profile/IsAuthenticated");
 
             if (response.IsSuccessStatusCode)
             {
                 bool isAuthenticated = await response.Content.ReadFromJsonAsync<bool>();
+
                 if (isAuthenticated)
                 {
                     return true;

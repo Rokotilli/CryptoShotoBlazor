@@ -5,24 +5,14 @@
 
 <PageTitle>Login</PageTitle>
 
-<div class="form-group">
-    <label for="Email">Email:</label>
-    <input type="text" id="Email" class="form-control" @bind="@login.Email" />
-</div>
+<AuthorizeView>
+    <Authorized>
+        <h1>Hello @context.User.Claims.First().Value</h1>
+    </Authorized>
+</AuthorizeView>
 
-<div class="form-group">
-    <label for="Password">Password:</label>
-    <input type="text" id="Password" class="form-control" @bind="@login.Password" />
-</div>
-
-<button class="btn btn-primary" @onclick="@Check">Login</button>
-
-
-@code {
-    private LoginDTO login = new LoginDTO();
-
-    private async Task Check()
-    {
-        await loginService.LoginSend(login);
-    }
-}
+<form action="login" method="post">
+    <input type="text" name="name" />
+    <input type="text" name="password" />
+    <input type="submit" />
+</form>

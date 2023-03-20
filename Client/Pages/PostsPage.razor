@@ -52,13 +52,7 @@
 
 
 @code {
-    protected override async Task OnInitializedAsync()
-{
-     if(await loginService.Bool()==false)
-     {
-         NavigationManager.NavigateTo("/login");
-     }
-}
+
     private PostDTO post = new PostDTO();
     private int id;
 

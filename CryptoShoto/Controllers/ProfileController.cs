@@ -28,11 +28,7 @@ namespace CryptoShoto.Controllers
                 return Unauthorized();
             }
 
-            var claims = new List<Claim> { new Claim(ClaimTypes.Name, model.Email) };
-
-            ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Cookies");
-
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+            Console.WriteLine(log.Email + log.Password+"YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
 
             return Ok();
         }
