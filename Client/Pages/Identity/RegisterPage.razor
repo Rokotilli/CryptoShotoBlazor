@@ -1,17 +1,29 @@
 ﻿@page "/register"
 @using CryptoShoto.DTO;
 @using Client.Services;
+@inject IJSRuntime JSRunTime;
 @inject NavigationManager NavigationManager;
 
 <PageTitle>Register</PageTitle>
 
-<form action="Register" method="post">
-    <input type="text" name="email" />
-    <input type="text" name="name" />
-    <input type="text" name="password" />
-    <input type="text" name="password2" />
-    <input type="submit" />
-</form>
+<EditForm Model="@registerModel" OnSubmit="@HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <label for="Email">Email:</label>
+    <InputText id="name" @bind-Value="registerModel.Email" class="form-control" />
+
+    <label for="NickName">NickName:</label>
+    <InputText id="name" @bind-Value="registerModel.NickName" />
+
+    <label for="Password">Password:</label>
+    <InputText id="name" @bind-Value="registerModel.Password" />
+
+    <label for="ConfirmPassword">ConfirmPassword:</label>
+    <InputText id="name" @bind-Value="registerModel.ConfirmPassword" />
+
+    <button type="submit">Submit</button>
+</EditForm> 
 
 <br>
 <br>
@@ -19,11 +31,15 @@
 <br>
 <br>
 
-<button class="btn btn-primary" @onclick="@Iflogged">Sign in</button>
+<button class="btn btn-primary" onclick="window.location.href='/login'">Sign in</button>
 
 @code
 {
-    protected void Iflogged(){
-        NavigationManager.NavigateTo("/login");
+    private RegistrationDTO registerModel = new();
+
+    private async void HandleSubmit()
+    {
+        var authModule = await JSRunTime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
+        await authModule.InvokeVoidAsync("SignUp", registerModel.Email, registerModel.NickName, registerModel.Password, registerModel.ConfirmPassword, "/");
     }
 }

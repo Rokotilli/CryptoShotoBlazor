@@ -11,7 +11,8 @@ namespace BLL.Contracts
     {
         Task<User> SearchByEmail(string email);
 
-        Task<bool> CheckEmailsForReg(string email, string name);
+        Task<bool> CheckEmailsForReg(string email);
 
+		Task<bool> CheckUserNameForReg(string username);
 	}
 }

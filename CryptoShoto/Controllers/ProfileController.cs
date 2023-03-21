@@ -4,6 +4,7 @@ using CryptoShoto.DTO;
 using DAL.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -38,23 +39,20 @@ namespace CryptoShoto.Controllers
         [HttpPost("Add")]
         public async Task<ActionResult> AddUser(RegistrationDTO reg)
         {
-            if(await unitOfWork.userRepository.CheckEmailsForReg(reg.Email, reg.NickName) == true)
-            {
-				User temp = mapper.Map<User>(reg);
+            if(await unitOfWork.userRepository.CheckEmailsForReg(reg.Email))
+				return BadRequest("Почта занята");
+			if (await unitOfWork.userRepository.CheckEmailsForReg(reg.NickName))
+			    return BadRequest("Имя пользователя занято");
 
-                temp.RoleId = 1;
+			User temp = mapper.Map<User>(reg);
 
-                await unitOfWork.userRepository.AddAsync(temp);
+			temp.RoleId = 1;
 
-                await unitOfWork.SaveChangesAsync();
+			await unitOfWork.userRepository.AddAsync(temp);
 
-                return Ok();
-			}
+			await unitOfWork.SaveChangesAsync();
 
-            else
-            {
-                return BadRequest();
-            }
+			return Ok();
         }
     }
 }

@@ -2,23 +2,34 @@
 @using CryptoShoto.DTO;
 @using Client.Services;
 @inject LoginService loginService;
+@inject IJSRuntime JSRunTime;
+@inject NavigationManager NavigationManager;
 
 <PageTitle>Login</PageTitle>
 
-<AuthorizeView>
-    <Authorized>
-        <h1>Hello @context.User.Claims.First().Value</h1>
-    </Authorized>
-</AuthorizeView>
+<EditForm Model="@loginModel" OnSubmit="@HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
 
-<form action="Login" method="post">
-    <div class="form-group">
-        <label for="Email">Email:</label>
-        <input type="text" name="Email" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label for="Passord">Password:</label>
-        <input type="text" name="Password" class="form-control" />
-    </div>
-    <input type="submit" class="btn btn-primary"/>
-</form>
+    <label for="Email">Email:</label>
+    <InputText id="name" @bind-Value="loginModel.Email" class="form-control" />
+
+    <label for="Password">Password:</label>
+    <InputText id="name" @bind-Value="loginModel.Password" class="form-control" /><br />
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+    
+   
+</EditForm> 
+
+
+@code
+{
+    private LoginDTO loginModel = new();
+   
+    private async Task HandleSubmit()
+    {        
+        var authModule = await JSRunTime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
+        await authModule.InvokeVoidAsync("SignIn", loginModel.Email, loginModel.Password);
+    }
+}

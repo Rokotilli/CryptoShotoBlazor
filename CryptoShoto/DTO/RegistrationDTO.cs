@@ -4,22 +4,23 @@ namespace CryptoShoto.DTO
 {
 	public class RegistrationDTO
 	{
-		[Required]
-		[EmailAddress]
-		[StringLength(40)]
-		public string Email { get; set; }
+        [Required(ErrorMessage = "Вы должны ввести почту")]
+        [EmailAddress(ErrorMessage = "Неправильный синтаксис, пример \"example@gmail.com\"")]
+        [StringLength(40, ErrorMessage = "Максимальная длина 40 символов")]
+        [Display(Name = "Email")]
+        public string Email { get; set; }
 
-		[Required]
-		[StringLength(15, MinimumLength = 3)]
-		public string NickName { get; set; }
+        [Required(ErrorMessage = "Вы должны ввести имя пользователя")]
+        [StringLength(15, MinimumLength = 3, ErrorMessage = "Максимальная длина 15, минимальная 3 символа")]
+        public string NickName { get; set; }
 
-		[Required]
-		//[RegularExpression("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])$")]
-		[StringLength(100, MinimumLength = 8)]
-		public string Password { get; set; }
+        [Required(ErrorMessage = "Вы должны ввести пароль")]
+        //[RegularExpression("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])$", ErrorMessage = "Пароль должен местить как минимум одну заглавную букву и цифру")]
+        [StringLength(100, MinimumLength = 8, ErrorMessage = "Максимальная длина 100, минимальная 8 символов")]
+        public string Password { get; set; }
 
-		[Required]
-		[Compare("Password")]
-		public string ConfirmPassword { get; set; }
+        [Required(ErrorMessage = "Вы должны повторить пароль")]
+        [Compare("Password", ErrorMessage = "Пароли должны совпадать")]
+        public string ConfirmPassword { get; set; }
 	}
 }
