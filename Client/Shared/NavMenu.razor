@@ -1,4 +1,7 @@
-﻿<section class="first__section">
+﻿@inject AuthenticationStateProvider AuthenticationStateProvider;
+
+
+<section class="first__section">
 			<header class="header">
 					<div class="header__logo_home">
 						<img src="img/First/logo.png" alt="" class="logo_img"> 
@@ -11,14 +14,31 @@
 							<a href="/news" class="nav__links_home">News</a>
 							<a href="/posts" class="nav__links_home">Posts</a>
 						</div>
+			@if (_authenticationState.User.Identity.IsAuthenticated)
+			{
 						<div class="logo_button_home">
-							<a href="/Registration" class="nav__links_home">Sign up</a>
-						</div>
+										<a href="/" class="nav__links_home">Profile</a>
+									</div>
+			}
+			else
+			{
+					
+									<div class="logo_button_home">
+									<a href="/Register" class="nav__links_home">Sign up</a>
+					</div>
+			}
+						
 					</nav>
 				</header>
 </section>
 
-@*@code {
+@code {
+	AuthenticationState _authenticationState;
+	protected override async Task OnInitializedAsync()
+    {
+         _authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+    }
+
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapsee" : null;
@@ -27,4 +47,4 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
-}*@
+}

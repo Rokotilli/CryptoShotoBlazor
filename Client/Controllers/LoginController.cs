@@ -1,12 +1,8 @@
 ﻿using Client.Services;
 using CryptoShoto.DTO;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace Client.Controllers
 {
@@ -21,22 +17,27 @@ namespace Client.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Login([FromForm] string name, [FromForm] string password)
+        public async Task<ActionResult> Login([FromForm] string Email, [FromForm] string Password)
         {
             LoginDTO loginDTO = new LoginDTO()
             {
-                Email = name,
-                Password = password
+                Email = Email,
+                Password = Password
             };
-            await _loginService.LoginSend(loginDTO);
 
-            var claims = new List<Claim> { new Claim(ClaimTypes.Name, name) };
+            if (await _loginService.LoginSend(loginDTO) == true) 
+            {
+				var claims = new List<Claim> { new Claim("Email", Email) };
 
-            ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Cookies");
+				ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Cookies");
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                await HttpContext.SignInAsync(new ClaimsPrincipal(claimsIdentity));
 
-            return Redirect("/");
+                return Redirect("/");
+            };
+
+            return Redirect("/login");
         }
+
     }
 }

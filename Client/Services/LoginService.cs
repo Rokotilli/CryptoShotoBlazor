@@ -7,35 +7,33 @@ namespace Client.Services
     public class LoginService
     {
         private readonly HttpClient httpClient;
+        private HttpContext context;
 
         public LoginService(HttpClient httpClient)
         {
             this.httpClient = httpClient;
         }
 
-        public async Task LoginSend(LoginDTO lg)
+        public async Task<bool> LoginSend(LoginDTO lg)
         {
-            await httpClient.PostAsJsonAsync("api/profile", lg);
-        }
-        
-        public async Task<bool> Bool()
-        {
-            var response = await httpClient.GetAsync("api/profile/IsAuthenticated");
+            var response = await httpClient.PostAsJsonAsync("api/profile/IsAuthenticated", lg);
 
             if (response.IsSuccessStatusCode)
-            {
-                bool isAuthenticated = await response.Content.ReadFromJsonAsync<bool>();
-
-                if (isAuthenticated)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
+                return true;
             return false;
         }
-    }
+
+		public async Task<bool> RegisterSend(RegistrationDTO reg)
+		{
+			var result = await httpClient.PostAsJsonAsync("api/profile/add", reg);
+			if (result.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+		}
+	}
 }

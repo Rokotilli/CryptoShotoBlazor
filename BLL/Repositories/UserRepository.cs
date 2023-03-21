@@ -18,4 +18,24 @@ public class UserRepository : GenericRepository<User>, IUserRepository
 
         return user;
     }
+
+	public async Task<bool> CheckEmailsForReg(string email, string name)
+	{
+		var user = databaseContext.Users.FirstOrDefault(u => u.Email == email);
+
+        var user2 = databaseContext.Users.FirstOrDefault(u => u.UserName == name);
+
+		if (user == null)
+        {
+            if(user2 == null){
+                return true;
+            }
+            return false;
+        }
+
+        else
+        {
+            return false;
+        }
+	}
 }

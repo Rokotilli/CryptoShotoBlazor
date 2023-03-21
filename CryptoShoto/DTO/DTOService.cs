@@ -16,5 +16,17 @@ namespace CryptoShoto.DTO
             });
             mapper = configuration.CreateMapper();
         }
+
+        public void CreateMapperUser(ref IMapper mapper)
+        {
+			var configuration = new MapperConfiguration(cfg =>
+			{
+				cfg.CreateMap<RegistrationDTO, User>()
+					.ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+					.ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.NickName))
+					.ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password));
+			});
+			mapper = configuration.CreateMapper();
+		}
     }
 }

@@ -1,0 +1,29 @@
+﻿@page "/register"
+@using CryptoShoto.DTO;
+@using Client.Services;
+@inject NavigationManager NavigationManager;
+
+<PageTitle>Register</PageTitle>
+
+<form action="Register" method="post">
+    <input type="text" name="email" />
+    <input type="text" name="name" />
+    <input type="text" name="password" />
+    <input type="text" name="password2" />
+    <input type="submit" />
+</form>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<button class="btn btn-primary" @onclick="@Iflogged">Sign in</button>
+
+@code
+{
+    protected void Iflogged(){
+        NavigationManager.NavigateTo("/login");
+    }
+}

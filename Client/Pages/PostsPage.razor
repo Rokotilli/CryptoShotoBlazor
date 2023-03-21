@@ -1,57 +1,67 @@
 ﻿@page "/posts"
 @using Client.Services
 @using CryptoShoto.DTO;
-@using System.Security.Claims;
-@using DAL.Models;
 @inject PostService postService;
-@inject LoginService loginService;
 @inject NavigationManager NavigationManager;
-@inject AuthenticationStateProvider authProvide;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
 @attribute [Authorize]
 
 <PageTitle>Posts</PageTitle>
 
-<div class="form-group">
-    <label for="Text">Text:</label>
-    <input type="text" id="Text" class="form-control" @bind="@post.Text" />
-</div>
+<AuthorizeView>
+    <Authorized>
+        <div class="form-group">
+            <label for="Text">Text:</label>
+            <input type="text" id="Text" class="form-control" @bind="@post.Text" />
+        </div>
 
-<div class="form-group">
-    <label for="Photo">Photo:</label>
-    <input type="text" id="Photo" class="form-control" @bind="@post.Photo" />
-</div>
+        <div class="form-group">
+            <label for="Photo">Photo:</label>
+            <input type="text" id="Photo" class="form-control" @bind="@post.Photo" />
+        </div>
 
-<button class="btn btn-primary" @onclick="@CreatePost">Create</button>
+        <button class="btn btn-primary" @onclick="@CreatePost">Create</button>
 
-<div class="form-group">
-    <label for="Id">Id:</label>
-    <input type="text" id="Id" class="form-control" @bind="@id" />
-</div>
-<button class="btn btn-primary" @onclick="@DeletePost">Delete</button>
+        <div class="form-group">
+            <label for="Id">Id:</label>
+            <input type="text" id="Id" class="form-control" @bind="@id" />
+        </div>
+        <button class="btn btn-primary" @onclick="@DeletePost">Delete</button>
 
 
-<br>
-<br>
-<br>
-<br>
+        <br>
+        <br>
+        <br>
+        <br>
 
-<button class="btn btn-primary" @onclick="@OnKeyDown">Show</button>
-<ul>
-    @if (posts != null && posts.Any())
-    {
-        @foreach (var item in posts)
-        {
-            <li>@item.Text</li>
-        }
-    }
-    else
-    {
-        <li>No posts found.</li>
-    }
-</ul>
-
+        <button class="btn btn-primary" @onclick="@OnKeyDown">Show</button>
+        <ul>
+            @if (posts != null && posts.Any())
+            {
+                @foreach (var item in posts)
+                {
+                    <li>@item.Text</li>
+                }
+            }
+            else
+            {
+                <li>No posts found.</li>
+            }
+        </ul>
+    </Authorized>
+</AuthorizeView>
 
 @code {
+    private AuthenticationState _authenticationState;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (!_authenticationState.User.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+    }
 
     private PostDTO post = new PostDTO();
     private int id;

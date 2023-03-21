@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Pages\Identity\RegistrationPage.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Controllers\NewFile.txt" />
     <None Remove="DTO\NewFile.txt" />
     <None Remove="Services\NewFile.txt" />
   </ItemGroup>

@@ -9,8 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
-builder.Services.AddAuthentication("Cookies").AddCookie();
-builder.Services.AddAuthorization();
 
 builder.Services.AddDbContext<CSContext>(options =>
 {
@@ -30,10 +28,6 @@ builder.Services.AddScoped<IFollowerRepository, FollowerRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<DTOService>();
-//builder.Services.AddScoped<WalletValidation>();
-//builder.Services.AddScoped<CoinValidation>();
-//builder.Services.AddScoped<UserValidation>();
-//builder.Services.AddScoped<MiddleValidation>();
 
 var app = builder.Build();
 
@@ -48,9 +42,6 @@ app.UseSwaggerUI(options =>
 app.UseHsts();
 
 app.UseHttpsRedirection();
-
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.MapControllers();
 

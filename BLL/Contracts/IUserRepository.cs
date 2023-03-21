@@ -10,5 +10,8 @@ namespace BLL.Contracts
     public interface IUserRepository : IGenericRepository<User>
     {
         Task<User> SearchByEmail(string email);
-    }
+
+        Task<bool> CheckEmailsForReg(string email, string name);
+
+	}
 }

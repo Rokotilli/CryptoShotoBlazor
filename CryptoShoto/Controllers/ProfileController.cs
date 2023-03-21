@@ -1,5 +1,7 @@
-﻿using BLL.Contracts;
+﻿using AutoMapper;
+using BLL.Contracts;
 using CryptoShoto.DTO;
+using DAL.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -12,31 +14,47 @@ namespace CryptoShoto.Controllers
     public class ProfileController : ControllerBase
     {
         public readonly IUnitOfWork unitOfWork;
+		private IMapper mapper;
 
-        public ProfileController(IUnitOfWork unitOfWork)
+		public ProfileController(IUnitOfWork unitOfWork, DTOService _mapperService)
         {
             this.unitOfWork = unitOfWork;
-        }
+            _mapperService.CreateMapperUser(ref mapper);
+		}
 
-        [HttpPost]
-        public async Task<ActionResult<LoginDTO>> Login(LoginDTO log)
+        [HttpPost("IsAuthenticated")]
+        public async Task<ActionResult> CheckProfile(LoginDTO log)
         {
             var model = await unitOfWork.userRepository.SearchByEmail(log.Email);
 
-            if (model == null && log.Password != model.Password)
+            if (model == null || log.Password != model.Password)
             {
-                return Unauthorized();
+                return NotFound();
             }
-
-            Console.WriteLine(log.Email + log.Password+"YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
 
             return Ok();
         }
 
-        [HttpGet("IsAuthenticated")]
-        public bool IsAuthenticated()
+        [HttpPost("Add")]
+        public async Task<ActionResult> AddUser(RegistrationDTO reg)
         {
-            return User.Identity.IsAuthenticated;
+            if(await unitOfWork.userRepository.CheckEmailsForReg(reg.Email, reg.NickName) == true)
+            {
+				User temp = mapper.Map<User>(reg);
+
+                temp.RoleId = 1;
+
+                await unitOfWork.userRepository.AddAsync(temp);
+
+                await unitOfWork.SaveChangesAsync();
+
+                return Ok();
+			}
+
+            else
+            {
+                return BadRequest();
+            }
         }
     }
 }
