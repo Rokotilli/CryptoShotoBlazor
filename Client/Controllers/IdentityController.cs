@@ -1,6 +1,9 @@
-﻿using Client.Services;
+﻿using Client.Models;
+using Client.Services;
 using CryptoShoto.DTO;
+using DAL.Models;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Internal;
 using System.Security.Claims;
@@ -11,44 +14,59 @@ namespace Client.Controllers
     [ApiController]
     public class IdentityController : ControllerBase
     {
-        private readonly LoginService _loginService;
-        public IdentityController(LoginService loginService)
+        private readonly IdentityService _identityService;
+
+        public IdentityController(IdentityService identityService)
         {
-            _loginService = loginService;
+            _identityService = identityService;
         }
 
         [HttpPost("SignIn")]
-        public async Task<ActionResult> SignIn(LoginDTO model)
+        public async Task<ActionResult> SignIn(ClaimModel model)
         {
-            if (await _loginService.LoginSend(model) == "OK") 
-            {
-                var claims = new List<Claim> { new Claim("Email", model.Email) };
-
-				ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Cookies");
-
-                await HttpContext.SignInAsync(new ClaimsPrincipal(claimsIdentity));
-
-                return Ok();
+            var claims = new List<Claim> { 
+                new Claim("Email", model.Email), 
+                new Claim(ClaimTypes.Name, model.Username), 
+                new Claim("UID", model.UserId.ToString()) 
             };
 
-            return NotFound();
+			ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Cookies");
+
+            await HttpContext.SignInAsync(new ClaimsPrincipal(claimsIdentity));
+
+            return Ok();
         }
 
-        [HttpPost("SignUp")]
-        public async Task<ActionResult> SignUp(RegistrationDTO model)
+        [HttpPut("changename")]
+        public async Task<ActionResult> ChangeName(ChangeNameModel user)
         {
-            if (await _loginService.RegisterSend(model) == "OK")
+            if (HttpContext.User.Identity is ClaimsIdentity claimsIdentity)
             {
-                var claims = new List<Claim> { new Claim("Email", model.Email) };
+                var nameClaim = claimsIdentity.FindFirst(ClaimTypes.Name);
 
-                ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Cookies");
+                if (claimsIdentity.TryRemoveClaim(nameClaim))
+                {
+                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
 
-                await HttpContext.SignInAsync(new ClaimsPrincipal(claimsIdentity));
+                    var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-                return Ok();
-            };
+                    await HttpContext.SignInAsync(claimsPrincipal);
 
-            return NotFound();
+                    await _identityService.ChangeName(user);
+
+                    return Ok();
+                }
+            }
+
+            return BadRequest();
+        }
+
+        [HttpPost]
+        [Route("SignOut")]
+        public async Task<ActionResult> SignOutPost()
+        {
+            await HttpContext.SignOutAsync("Cookies");
+            return Ok();
         }
     }
 }

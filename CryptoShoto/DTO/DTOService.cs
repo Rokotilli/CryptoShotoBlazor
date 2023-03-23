@@ -23,7 +23,7 @@ namespace CryptoShoto.DTO
 			{
 				cfg.CreateMap<RegistrationDTO, User>()
 					.ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-					.ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.NickName))
+					.ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
 					.ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password));
 			});
 			mapper = configuration.CreateMapper();

@@ -28,13 +28,12 @@ namespace CryptoShoto.Controllers
             return Ok(model);
         }
 
-        [Authorize]
         [HttpPost]
-        public async Task<ActionResult<PostDTO>> AddPost([FromBody] PostDTO model)
+        public async Task<ActionResult<PostDTO>> AddPost(PostDTO model)
         {
             Post post = mapper.Map<Post>(model);
 
-            var modelUser = await unitOfWork.userRepository.SearchByEmail(HttpContext.User.Identity.Name);
+            var modelUser = await unitOfWork.userRepository.GetByIdAsync(model.UserId);
             
             post.UserId = modelUser.Id;
             post.Date = DateTime.Now;
@@ -54,16 +53,14 @@ namespace CryptoShoto.Controllers
             return Ok();
 		}
 
-        [HttpGet("myposts")]
-        public async Task<ActionResult<List<PostDTO>>> GetAllPostsByUserId()
+        [HttpGet("myposts/{userid}")]
+        public async Task<ActionResult<List<Post>>> GetAllPostsByUserId(int userid)
         {
-            var modelUser = await unitOfWork.userRepository.SearchByEmail(HttpContext.User.Identity.Name);
-
-            var model = await unitOfWork.postRepository.PostGetByUserId(modelUser.Id);   
+            var model = await unitOfWork.postRepository.PostGetByUserId(userid);   
 
             List<Post> temp = model.ToList();
 
-            return Ok();
+            return Ok(temp);
         }
     }
 }

@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <None Remove="Controllers\NewFile.txt" />
+    <None Remove="DTO\CEntity" />
     <None Remove="DTO\NewFile.txt" />
     <None Remove="DTO\PostDTO" />
     <None Remove="Views\Home\Index.html" />

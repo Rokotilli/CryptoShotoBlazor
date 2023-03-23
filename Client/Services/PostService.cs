@@ -1,4 +1,4 @@
-﻿using CryptoShoto.DTO;
+﻿	using CryptoShoto.DTO;
 using DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -30,8 +30,8 @@ public class PostService
 		await httpClient.PostAsJsonAsync("api/posts", post);
 	}
 
-	public async Task<List<PostDTO>> GetAllPostsByUser()
+	public async Task<List<Post>> GetAllPostsByUser(int userid)
 	{
-		return await httpClient.GetFromJsonAsync<List<PostDTO>>($"api/posts/myposts");
+		return await httpClient.GetFromJsonAsync<List<Post>>($"api/posts/myposts/{userid}");
 	}
 }

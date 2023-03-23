@@ -1,35 +1,58 @@
 ﻿@page "/login"
 @using CryptoShoto.DTO;
 @using Client.Services;
-@inject LoginService loginService;
+@inject IdentityService identityService;
 @inject IJSRuntime JSRunTime;
+
 @inject NavigationManager NavigationManager;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
 
 <PageTitle>Login</PageTitle>
 
-<EditForm Model="@loginModel" OnSubmit="@HandleSubmit">
+<EditForm Model="@loginModel" OnValidSubmit="@HandleSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
     <label for="Email">Email:</label>
-    <InputText id="name" @bind-Value="loginModel.Email" class="form-control" />
+    <InputText @bind-Value="loginModel.Email" class="form-control" />
 
     <label for="Password">Password:</label>
-    <InputText id="name" @bind-Value="loginModel.Password" class="form-control" /><br />
+    <InputText @bind-Value="loginModel.Password" class="form-control" /><br />
 
-    <button type="submit" class="btn btn-primary">Submit</button>
-    
-   
+    <button type="submit" class="btn btn-primary">Submit</button>   
 </EditForm> 
 
+@if (check == true){<p>Почта или пароль введены неверно</p>}
 
 @code
 {
+    private AuthenticationState _authenticationState;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            var authModule = await JSRunTime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
+            await authModule.InvokeVoidAsync("SendMessage", "You are already authorizated!");
+
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
     private LoginDTO loginModel = new();
-   
+    private bool check = false;
+
     private async Task HandleSubmit()
-    {        
-        var authModule = await JSRunTime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
-        await authModule.InvokeVoidAsync("SignIn", loginModel.Email, loginModel.Password);
+    {
+        if (await identityService.LoginSend(loginModel) == "OK")
+        {
+            var user = await identityService.GetUserByEmail(loginModel.Email);
+            var authModule = await JSRunTime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
+            await authModule.InvokeVoidAsync("SignIn", loginModel.Email, user.UserName, user.Id, "/");
+        }
+
+        else
+            check = true;
     }
 }

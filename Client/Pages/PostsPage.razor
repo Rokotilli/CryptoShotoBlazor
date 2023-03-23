@@ -1,10 +1,10 @@
 ﻿@page "/posts"
 @using Client.Services
 @using CryptoShoto.DTO;
+@using DAL.Models
 @inject PostService postService;
 @inject NavigationManager NavigationManager;
 @inject AuthenticationStateProvider AuthenticationStateProvider;
-@attribute [Authorize]
 
 <PageTitle>Posts</PageTitle>
 
@@ -22,24 +22,19 @@
 
         <button class="btn btn-primary" @onclick="@CreatePost">Create</button>
 
-        <div class="form-group">
-            <label for="Id">Id:</label>
-            <input type="text" id="Id" class="form-control" @bind="@id" />
-        </div>
-        <button class="btn btn-primary" @onclick="@DeletePost">Delete</button>
-
         <br>
         <br>
         <br>
         <br>
 
-        <button class="btn btn-primary" @onclick="@OnKeyDown">Show</button>
+        <button class="btn btn-primary" @onclick="@ShowPosts">Show</button>
         <ul>
             @if (posts != null && posts.Any())
             {
                 @foreach (var item in posts)
                 {
                     <li>@item.Text</li>
+                    <button @onclick="() => DeletePost(item.Id)">Delete</button>
                 }
             }
             else
@@ -65,11 +60,14 @@
     private PostDTO post = new PostDTO();
     private int id;
 
-    private List<PostDTO> posts;
+    private List<Post> posts;
 
     private async Task CreatePost()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        post.UserId = int.Parse(authState.User.FindFirst("UID").Value);
         await postService.AddPost(post);
+        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
     }
 
     private async Task DeletePost()
@@ -77,8 +75,15 @@
         await postService.DeletePost(id);
     }
 
-    private async Task OnKeyDown()
+    private async Task ShowPosts()
     {
-        posts = await postService.GetAllPostsByUser();
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        posts = await postService.GetAllPostsByUser(int.Parse(authState.User.FindFirst("UID").Value));
+    }
+
+    public void DeletePost(int newsId)
+    {
+        postService.DeletePost(newsId);
+        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
     }
 }

@@ -12,10 +12,10 @@ namespace CryptoShoto.DTO
 
         [Required(ErrorMessage = "Вы должны ввести имя пользователя")]
         [StringLength(15, MinimumLength = 3, ErrorMessage = "Максимальная длина 15, минимальная 3 символа")]
-        public string NickName { get; set; }
+        public string UserName { get; set; }
 
         [Required(ErrorMessage = "Вы должны ввести пароль")]
-        //[RegularExpression("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])$", ErrorMessage = "Пароль должен местить как минимум одну заглавную букву и цифру")]
+        [RegularExpression(@"^(?=.*\d)(?=.*[A-Z]).+$", ErrorMessage = "Пароль должен местить как минимум одну заглавную букву и цифру")]
         [StringLength(100, MinimumLength = 8, ErrorMessage = "Максимальная длина 100, минимальная 8 символов")]
         public string Password { get; set; }
 

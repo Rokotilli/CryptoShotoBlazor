@@ -19,21 +19,28 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         return user;
     }
 
-	public async Task<bool> CheckEmailsForReg(string email)
-	{
-		var user = databaseContext.Users.FirstOrDefault(u => u.Email == email);
-
-		if (user != null)
-            return true;
-        return false;
-	}
-
-    public async Task<bool> CheckUserNameForReg(string username)
+    public async Task<User> SearchByName(string name)
     {
-		var user = databaseContext.Users.FirstOrDefault(u => u.UserName == username);
+        var user = databaseContext.Users.FirstOrDefault(u => u.UserName == name);
 
-		if (user != null)
-			return true;
-		return false;
-	}
+        return user;
+    }
+
+
+    public async Task<string> CheckEmailAndUserNameForReg(string email, string username)
+	{
+        var Email = databaseContext.Users.FirstOrDefault(u => u.Email == email);
+
+        var Username = databaseContext.Users.FirstOrDefault(u => u.UserName == username);
+
+        if (Email != null && Username != null)
+            return "Email and username are taken";
+        else if (Email != null)
+            return "Email is taken";
+        else if (Username != null)
+            return "Username is taken";
+        else
+            return null;
+    }
+
 }

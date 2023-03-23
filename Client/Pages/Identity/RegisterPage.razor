@@ -3,43 +3,74 @@
 @using Client.Services;
 @inject IJSRuntime JSRunTime;
 @inject NavigationManager NavigationManager;
+@inject IdentityService identityService;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
 
 <PageTitle>Register</PageTitle>
 
-<EditForm Model="@registerModel" OnSubmit="@HandleSubmit">
+<EditForm Model="@registerModel" OnValidSubmit="@HandleSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
     <label for="Email">Email:</label>
-    <InputText id="name" @bind-Value="registerModel.Email" class="form-control" />
+    <InputText @bind-Value="registerModel.Email" class="form-control" />
 
-    <label for="NickName">NickName:</label>
-    <InputText id="name" @bind-Value="registerModel.NickName" />
+    <label for="UserName">UserName:</label>
+    <InputText @bind-Value="registerModel.UserName" class="form-control" />
 
     <label for="Password">Password:</label>
-    <InputText id="name" @bind-Value="registerModel.Password" />
+    <InputText @bind-Value="registerModel.Password" class="form-control" />
 
     <label for="ConfirmPassword">ConfirmPassword:</label>
-    <InputText id="name" @bind-Value="registerModel.ConfirmPassword" />
+    <InputText @bind-Value="registerModel.ConfirmPassword" class="form-control" />
 
-    <button type="submit">Submit</button>
+    <button type="submit" class="btn btn-primary">Submit</button>
 </EditForm> 
 
-<br>
-<br>
-<br>
-<br>
-<br>
+@if (checkEmail == true){<p>Почта занята, попробуйте сменить почту</p>}
 
+@if (checkUserName == true){<p>Имя пользователя занято, попробуйте придумать другое</p>}
+
+<br>
+<p>Если вы зарегистрированы</p>
 <button class="btn btn-primary" onclick="window.location.href='/login'">Sign in</button>
 
 @code
 {
-    private RegistrationDTO registerModel = new();
-
-    private async void HandleSubmit()
+    protected override async Task OnInitializedAsync()
     {
-        var authModule = await JSRunTime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
-        await authModule.InvokeVoidAsync("SignUp", registerModel.Email, registerModel.NickName, registerModel.Password, registerModel.ConfirmPassword, "/");
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            var authModule = await JSRunTime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
+            await authModule.InvokeVoidAsync("SendMessage", "You are already authorizated!");
+
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
+    private RegistrationDTO registerModel = new();
+    bool checkEmail = false, checkUserName = false;
+
+    private async Task HandleSubmit()
+    {
+        string result = await identityService.RegisterSend(registerModel);
+
+        checkEmail = false; checkUserName = false;
+
+        if (result == "Email and username are taken")
+        {
+            checkEmail = true; checkUserName = true;
+        }
+        if (result == "Email is taken")
+            checkEmail = true;
+        if (result == "Username is taken")
+            checkUserName = true;
+        if (result == "OK")
+        {
+            var user = await identityService.GetUserByEmail(registerModel.Email);
+            var authModule = await JSRunTime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
+            await authModule.InvokeVoidAsync("SignIn", registerModel.Email, registerModel.UserName, user.Id, "/");
+        }
     }
 }

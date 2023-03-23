@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -13,6 +13,7 @@
   <ItemGroup>
     <None Remove="Controllers\NewFile.txt" />
     <None Remove="DTO\NewFile.txt" />
+    <None Remove="Pages\Identity\NewFile.txt" />
     <None Remove="Pages\NewFile.txt" />
     <None Remove="Services\NewFile.txt" />
   </ItemGroup>

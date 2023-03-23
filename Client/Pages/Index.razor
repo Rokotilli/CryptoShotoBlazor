@@ -1,7 +1,8 @@
 ﻿@page "/"
+@using System.Security.Claims;
 
 <AuthorizeView>
     <Authorized>
-        <h1>Hello @context.User.Claims.First().Value</h1>
+        <h1>Hello @context.User.FindFirst(ClaimTypes.Name).Value</h1>
     </Authorized>
 </AuthorizeView>
