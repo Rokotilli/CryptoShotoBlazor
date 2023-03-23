@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BLL.Contracts;
+using BLL.Repositories.Pagination;
 using CryptoShoto.DTO;
 using DAL.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -45,22 +46,30 @@ namespace CryptoShoto.Controllers
         }
 
 		[HttpDelete("{id}")]
-		public async Task<ActionResult<PostDTO>> DeletePost(int id)
+		public async Task<ActionResult<PostDTO>> DeletePost()
         {
-            await unitOfWork.postRepository.DeleteByIdAsync(id);
+            await unitOfWork.postRepository.DeleteByIdAsync(int.Parse(HttpContext.GetRouteValue("id").ToString()));
             await unitOfWork.SaveChangesAsync();
 
             return Ok();
 		}
 
         [HttpGet("myposts/{userid}")]
-        public async Task<ActionResult<List<Post>>> GetAllPostsByUserId(int userid)
+        public async Task<ActionResult<List<Post>>> GetAllPostsByUserId()
         {
-            var model = await unitOfWork.postRepository.PostGetByUserId(userid);   
+            var model = await unitOfWork.postRepository.PostGetByUserId(int.Parse(HttpContext.GetRouteValue("userid").ToString()));   
 
             List<Post> temp = model.ToList();
 
             return Ok(temp);
+        }
+
+        [HttpGet("GetPagedPosts/{page}/{userid}")]
+        public async Task<ActionResult<Pagination<Post>>> GetPagedPosts()
+        {
+            var result = await unitOfWork.postRepository.PagedPosts(int.Parse(HttpContext.GetRouteValue("page").ToString()), int.Parse(HttpContext.GetRouteValue("userid").ToString()));
+
+            return Ok(result);
         }
     }
 }

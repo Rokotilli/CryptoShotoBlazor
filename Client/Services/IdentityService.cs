@@ -21,6 +21,7 @@ namespace Client.Services
 
             return response.ReasonPhrase;
         }
+
         public async Task<string> RegisterSend(RegistrationDTO reg)
 		{
 			var result = await httpClient.PostAsJsonAsync("api/profile/RegUser", reg);
@@ -29,12 +30,14 @@ namespace Client.Services
                 return await result.Content.ReadAsStringAsync();
             return result.ReasonPhrase;
         }
+
         public async Task<User> GetUserByEmail(string email)
         {
             var response = await httpClient.GetFromJsonAsync<User>($"api/profile/GetUserByEmail/{email}");
 
             return response;
         }
+
         public async Task ChangeName(ChangeNameModel user)
         {
             var response = await httpClient.PutAsJsonAsync($"api/profile/ChangeName/{user.Email}", user.UserName);         

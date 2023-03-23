@@ -13,7 +13,6 @@
         <h1>Your Profile</h1>
         <p>Your email - @context.User.FindFirst("Email").Value</p>
         <p>Your name - @context.User.FindFirst(ClaimTypes.Name).Value</p>
-        <p>Your id - @context.User.FindFirst("UID").Value</p>
 
         <br/>
         <br/>
@@ -23,22 +22,21 @@
         
         <EditForm EditContext="@editContext" OnSubmit="@ChangeName">
             <ChildContent Context="editContext">
-                 <InputText @bind-Value="item.UserName" class="form-control" /><br />
 
-            <button type="submit" class="btn btn-primary">ChangeName</button>   
+                <InputText @bind-Value="item.UserName" class="form-control" /><br />
+
+                <button type="submit" class="btn btn-primary">ChangeName</button>   
+
             </ChildContent>
-
-           
         </EditForm> 
 
-        <button class="btn btn-primary" @onclick="@SignOut">SignOut</button> 
+        <button class="btn btn-primary" @onclick="@LogOut">LogOut</button> 
         @if(temp!=""){<p>@temp</p>}
     </Authorized>
 </AuthorizeView>
 
 @code
 {
-    private AuthenticationState _authenticationState;
     private ChangeNameModel item = new ChangeNameModel();
     private EditContext editContext;
     private string temp = "";
@@ -50,20 +48,19 @@
     protected async Task ChangeName(EditContext editContext)
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        if(await identityService.CheckName(item.UserName)){
+        if (await identityService.CheckName(item.UserName))
             temp = "There is an already the same nickname";
-        }
         else{
             var authModule = await JSRunTime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
-        await authModule.InvokeVoidAsync("ChangeName", item.UserName, authState.User.FindFirst("Email").Value,"/");
+            await authModule.InvokeVoidAsync("ChangeName", item.UserName, authState.User.FindFirst("Email").Value,"/");
         }
         
     }
 
-    protected async Task SignOut()
+    protected async Task LogOut()
     {
         var authModule = await JSRunTime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
-        await authModule.InvokeVoidAsync("SignOut", "/login");
+        await authModule.InvokeVoidAsync("LogOut", "/login");
     }
 
     protected override async Task OnInitializedAsync()

@@ -24,9 +24,9 @@
     xhr.send(JSON.stringify(data));
 }
 
-export function SignOut(redirect) {
+export function LogOut(redirect) {
 
-    var url = "/api/identity/signout";
+    var url = "/api/identity/logout";
     var xhr = new XMLHttpRequest();
 
     xhr.open("POST", url);
@@ -72,4 +72,32 @@ export function ChangeName(username, email, redirect) {
     };
 
     xhr.send(JSON.stringify(data));
+}
+
+export function BuyCoin() {
+    alarm("Введите количество");
+    let count = prompt();
+
+    return count;
+
+    //var url = "/api/identity/changename";
+    //var xhr = new XMLHttpRequest();
+
+    //xhr.open("POST", url);
+    //xhr.setRequestHeader("Accept", "application/json");
+    //xhr.setRequestHeader("Content-Type", "application/json");
+
+    //xhr.onreadystatechange = function () {
+    //    if (xhr.readyState === 4) {
+    //        console.log("Call '" + url + "'. Status " + xhr.status);
+    //        if (redirect)
+    //            location.replace(redirect);
+    //    }
+    //};
+    //var data = {
+    //    username: username,
+    //    email: email
+    //};
+
+    //xhr.send(JSON.stringify(data));
 }

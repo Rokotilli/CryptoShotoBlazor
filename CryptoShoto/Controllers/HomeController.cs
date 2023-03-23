@@ -4,7 +4,7 @@ using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
-namespace Lab3.Controllers
+namespace CryptoShoto.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

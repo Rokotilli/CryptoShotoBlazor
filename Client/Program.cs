@@ -25,6 +25,11 @@ builder.Services.AddHttpClient<IdentityService>(httpClient =>
     httpClient.BaseAddress = new Uri(builder.Configuration["ApiUrl"]);
 });
 
+builder.Services.AddHttpClient<WalletService>(httpClient =>
+{
+    httpClient.BaseAddress = new Uri(builder.Configuration["ApiUrl"]);
+});
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

@@ -62,8 +62,8 @@ namespace Client.Controllers
         }
 
         [HttpPost]
-        [Route("SignOut")]
-        public async Task<ActionResult> SignOutPost()
+        [Route("LogOut")]
+        public async Task<ActionResult> LogOut()
         {
             await HttpContext.SignOutAsync("Cookies");
             return Ok();

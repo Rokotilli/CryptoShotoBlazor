@@ -1,4 +1,4 @@
-﻿	using CryptoShoto.DTO;
+﻿using CryptoShoto.DTO;
 using DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -15,12 +15,13 @@ public class PostService
 		this.httpClient = httpClient;
 	}
 
-	public async Task<IEnumerable<Post>> GetPosts()
-	{
-		return await httpClient.GetFromJsonAsync<IEnumerable<Post>>("api/posts");
-	}
+    public async Task<IEnumerable<Post>> GetPosts(int page, int userid)
+    {
+        return await httpClient.GetFromJsonAsync<IEnumerable<Post>>($"api/posts/GetPagedPosts/{page}/{userid}");
+        
+    }
 
-	public async Task DeletePost(int id)
+    public async Task DeletePost(int id)
 	{	
 		await httpClient.DeleteAsync($"api/posts/{id}");
 	}
@@ -34,4 +35,13 @@ public class PostService
 	{
 		return await httpClient.GetFromJsonAsync<List<Post>>($"api/posts/myposts/{userid}");
 	}
+
+    public async Task<int> GetCountOfPosts()
+    {
+        var all = await httpClient.GetFromJsonAsync<IEnumerable<Post>>("api/posts");
+
+        if (all.Count() % 5 == 0)
+            return all.Count() / 5;
+        return all.Count() / 5 + 1;
+    }
 }

@@ -25,14 +25,21 @@
     <InputText @bind-Value="registerModel.ConfirmPassword" class="form-control" />
 
     <button type="submit" class="btn btn-primary">Submit</button>
+
 </EditForm> 
 
-@if (checkEmail == true){<p>Почта занята, попробуйте сменить почту</p>}
+@if (checkEmail == true)
+{
+    <p>This email is taken, try another one</p>
+}
 
-@if (checkUserName == true){<p>Имя пользователя занято, попробуйте придумать другое</p>}
+@if (checkUserName == true)
+{
+    <p>This username is taken, try another one</p>
+}
 
 <br>
-<p>Если вы зарегистрированы</p>
+<p>If you are already registered</p>
 <button class="btn btn-primary" onclick="window.location.href='/login'">Sign in</button>
 
 @code

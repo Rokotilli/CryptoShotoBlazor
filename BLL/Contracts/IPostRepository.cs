@@ -1,4 +1,5 @@
-﻿using DAL.Models;
+﻿using BLL.Repositories.Pagination;
+using DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,7 @@ namespace BLL.Contracts
     public interface IPostRepository : IGenericRepository<Post>
     {
         Task<IQueryable<Post>> PostGetByUserId(int id);
+
+        Task<Pagination<Post>> PagedPosts(int page, int userid);
     }
 }

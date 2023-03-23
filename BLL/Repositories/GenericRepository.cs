@@ -1,6 +1,7 @@
 ﻿using DAL.DBContext;
 using Microsoft.EntityFrameworkCore;
 using BLL.Contracts;
+using DAL.Models;
 
 namespace BLL.Repositories;
 
@@ -31,6 +32,7 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
         {
             throw new ArgumentNullException($"{nameof(TEntity)} entity must not be null");
         }
+
         await table.AddAsync(entity);
     }
 

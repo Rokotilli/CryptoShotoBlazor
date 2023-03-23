@@ -4,11 +4,11 @@ namespace CryptoShoto.DTO
 {
     public class LoginDTO
     {
-        [Required(ErrorMessage = "Вы должны ввести почту")]
-        [EmailAddress(ErrorMessage = "Неправильный синтаксис, пример \"example@gmail.com\"")]
+        [Required(ErrorMessage = "You must enter email")]
+        [EmailAddress(ErrorMessage = "Incorrect syntax, example: \"example@gmail.com\"")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Вы должны ввести пароль")]
+        [Required(ErrorMessage = "You must enter password")]
         public string Password { get; set; }
     }
 }

@@ -1,8 +1,58 @@
 ﻿@page "/"
 @using System.Security.Claims;
+@using DAL.Models;
+@using Client.Services;
+@inject NewsService newsService;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
 
-<AuthorizeView>
-    <Authorized>
-        <h1>Hello @context.User.FindFirst(ClaimTypes.Name).Value</h1>
-    </Authorized>
-</AuthorizeView>
+<section>
+	<div class="container">
+		<div class="HomePage">
+            <div class="HomeElement">
+                <div class="HomeNickName">
+                    <div class="intro__title"> <h1>Hello @nickname </h1>  </div>
+                </div>
+            </div>
+            
+            <div class="HomeElement">
+                <div class="TheLatestNew">
+                    @if (item == null)
+                    {
+                        <p>Loading...</p>
+                    }
+                    else
+                    {
+                        <hr align="center" width="1200" size="5" color="red" />
+                        <div class="HomeNew"> 
+
+                            <div class="HomeNewElement">
+                                <p>@item.Text</p>
+                            </div>
+                            <div class="HomeNewElement">
+                                <img src=@item.Media width="350" height="350" />
+                            </div>
+                        </div>
+                       
+                        <hr align="center" width="1200" size="5" color="red" />
+                    }
+                </div>
+            </div>
+            
+        </div>
+	</div>
+</section>
+
+
+@code{
+    News item;
+    string nickname = "";
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            nickname = authState.User.FindFirst(ClaimTypes.Name).Value;
+        }
+        item = await newsService.GetLatestNew();
+    }
+}

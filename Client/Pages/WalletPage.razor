@@ -1,0 +1,155 @@
+﻿@page "/wallet"
+@using Client.Services
+@using CryptoShoto.DTO;
+@using DAL.Models
+@inject NavigationManager NavigationManager;
+@inject WalletService walletService;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+
+<PageTitle>Posts</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        @if (allcoins == null)
+        {
+            <p>Loading...</p>
+        }
+        else
+        {
+            <div class="WalletMain">
+                <div class="WalletLeftSide">
+                    <h2>Available coins</h2>
+                    @if (allcoins != null && allcoins.Any())
+                    {
+                        <InputText @bind-Value="@count" class="form-control" /> <h5>insert count of coin for buy</h5>
+                            @foreach (var item in allcoins)
+                            {
+                                <div class="WalletBuy">
+                                    <div>
+                                    <p>@item.Name   -   @item.Price</p>
+                                    <button class="btn btn-primary" @onclick="() => BuyCoin(item.Id)">Buy</button>
+                                    </div>
+                                </div>
+                            }
+                        <div class="NuberOfPage">
+                            <br />
+                            @foreach (var item in listofpages)
+                            {
+                                <button class="btn btn-primary" @onclick="() => OpenPageForAllCoins(item)">@item</button>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <li>No coins found.</li>
+                    }
+                </div>
+                <div class="WalletRightSide">
+                    <h2>Your coins</h2>
+                    @if (allusercoins != null && allusercoins.Any())
+                    {
+                        @foreach (var item in allusercoins)
+                        {
+                            @foreach (var item2 in coinswithoutpag)
+                            {
+                                if(item.CoinId == item2.Id)
+                                {
+                                    <p>@item2.Name   -   @item.Count</p>
+                                    break;
+                                }
+                            }
+                        }
+
+                    <div class="NuberOfPageUser">
+                        <br />
+                            @foreach (var item in listofpagesuser)
+                            {
+                            <button class="btn btn-primary" @onclick="() => OpenPageForUserCoins(item)">@item</button>
+                            }
+                    </div>
+                    }
+                    else{
+                       <li>No coins found.</li>
+                    }
+                </div>
+            </div>
+        }
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private List<Coin> allcoins;
+    string count = "";
+    List<int> listofpages = new List<int>();
+    List<Coin> coinswithoutpag = new List<Coin>();
+    private List<Wallet> allusercoins;
+    List<int> listofpagesuser = new List<int>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (!authState.User.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            int countofpages = await walletService.GetCountOfCoins();
+
+            int countofusercoins = await walletService.GetCountOfUserCoins(int.Parse(authState.User.FindFirst("UID").Value));
+
+            for(int i = 1; i <= countofusercoins; i++)
+            {
+                listofpagesuser.Add(i);
+            }
+
+            for (int i = 1; i <= countofpages; i++)
+            {
+                listofpages.Add(i);
+            }
+
+            IEnumerable<Coin> temp = await walletService.GetAllCoinsWithoutPag();
+            coinswithoutpag = temp.ToList();
+
+            await OpenPageForUserCoins();
+            await OpenPageForAllCoins();
+        }
+    }
+
+    public async Task OpenPageForAllCoins(int page = 1)
+    {
+        IEnumerable<Coin> Tallcoins;
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        Tallcoins = await walletService.GetAllCoins(page);
+
+        allcoins = Tallcoins.ToList();
+    }
+
+    public async Task OpenPageForUserCoins(int page = 1)
+    {
+        IEnumerable<Wallet> Tallusercoins;
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        Tallusercoins = await walletService.GetAllUserCoins(page, int.Parse(authState.User.FindFirst("UID").Value));
+
+        allusercoins = Tallusercoins.ToList();
+    }
+
+    public async Task BuyCoin(int coinid)
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        WalletDTO wallet = new WalletDTO();
+        wallet.UserId = int.Parse(authState.User.FindFirst("UID").Value);
+        wallet.CoinId = coinid;
+        wallet.Count = float.Parse(count);
+
+        if (await walletService.BuyCoin(wallet)){}
+            
+        else
+        {
+            await walletService.BuyCoinCount(wallet);
+            NavigationManager.NavigateTo("/wallet", forceLoad: true);
+        }
+
+    }
+}

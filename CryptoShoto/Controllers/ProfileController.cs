@@ -56,10 +56,10 @@ namespace CryptoShoto.Controllers
         }
 
         [HttpGet("CheckName/{name}")]
-        public async Task<ActionResult> CheckName(string name)
+        public async Task<ActionResult> CheckName()
         {
             
-            var model = await unitOfWork.userRepository.SearchByName(name);
+            var model = await unitOfWork.userRepository.SearchByName(HttpContext.GetRouteValue("name").ToString());
             
             if (model == null)
             {
@@ -70,9 +70,9 @@ namespace CryptoShoto.Controllers
         }
 
         [HttpGet("GetUserByEmail/{email}")]
-        public async Task<ActionResult<User>> GetNameByEmail(string email)
+        public async Task<ActionResult<User>> GetNameByEmail()
         {
-            return Ok(await unitOfWork.userRepository.SearchByEmail(email));
+            return Ok(await unitOfWork.userRepository.SearchByEmail(HttpContext.GetRouteValue("email").ToString()));
         }
 
         [HttpPut("ChangeName/{email}")]

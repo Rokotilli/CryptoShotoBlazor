@@ -210,4 +210,35 @@ justify-content: center;
     display: flex;
     justify-content: space-between;
 }
+
+.HomePage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.TheLatestNew {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+.HomeElement{
+    margin-top: 50px;
+    justify-content: center;
+    align-items:center;
+}
+
+.HomeNew {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.WalletBuy {
+    display: flex;
+    justify-content: space-between;
+}
 @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');

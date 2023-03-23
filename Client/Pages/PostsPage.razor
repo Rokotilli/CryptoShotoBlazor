@@ -27,26 +27,45 @@
         <br>
         <br>
 
-        <button class="btn btn-primary" @onclick="@ShowPosts">Show</button>
+        <h2>Your posts:</h2>
+
         <ul>
-            @if (posts != null && posts.Any())
+            @if (posts == null)
             {
-                @foreach (var item in posts)
-                {
-                    <li>@item.Text</li>
-                    <button @onclick="() => DeletePost(item.Id)">Delete</button>
-                }
+                <p>Loading...</p>
             }
             else
             {
-                <li>No posts found.</li>
+                @if (posts != null && posts.Any())
+                {
+                    @foreach (var item in posts)
+                    {
+                        <li>@item.Text <img src=@item.Photo width="200" height="200" /></li>
+                        <br />
+                        <button class="btn btn-primary" @onclick="() => DeletePost(item.Id)">Delete</button>
+                    }
+
+                    <div class="NuberOfPage">
+                        <br />
+                        @foreach (var item in listofpages)
+                        {
+                            <button class="btn btn-primary" @onclick="() => OpenPage(item)">@item</button>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <li>No posts found.</li>
+                }
             }
         </ul>
     </Authorized>
 </AuthorizeView>
 
 @code {
-    private AuthenticationState _authenticationState;
+    private PostDTO post = new PostDTO();
+    private IEnumerable<Post> posts;
+    List<int> listofpages = new List<int>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -55,12 +74,17 @@
         {
             NavigationManager.NavigateTo("/login");
         }
+        else
+        {
+            int countofpages = await postService.GetCountOfPosts();
+            for (int i = 1; i <= countofpages; i++)
+            {
+                listofpages.Add(i);
+            }
+            await OpenPage();
+        }
+        
     }
-
-    private PostDTO post = new PostDTO();
-    private int id;
-
-    private List<Post> posts;
 
     private async Task CreatePost()
     {
@@ -70,20 +94,15 @@
         NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
     }
 
-    private async Task DeletePost()
+    public async Task DeletePost(int newsId)
     {
-        await postService.DeletePost(id);
+        await postService.DeletePost(newsId);
+        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
     }
 
-    private async Task ShowPosts()
+    public async Task OpenPage(int page = 1)
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        posts = await postService.GetAllPostsByUser(int.Parse(authState.User.FindFirst("UID").Value));
-    }
-
-    public void DeletePost(int newsId)
-    {
-        postService.DeletePost(newsId);
-        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+        posts = await postService.GetPosts(page, int.Parse(authState.User.FindFirst("UID").Value));
     }
 }

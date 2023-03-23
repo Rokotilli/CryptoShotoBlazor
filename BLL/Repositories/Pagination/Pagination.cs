@@ -30,7 +30,7 @@ namespace BLL.Repositories.Pagination
             HasNext
         };
 
-        public async static Task<Pagination<T>> ToPagedListAsync(IEnumerable<T> source, int pageNumber, int pageSize)
+        public async static Task<Pagination<T>> ToPagedListAsync(IEnumerable<T> source, int pageNumber, int pageSize = 5)
         {
             int totalEntitiesCount = source.Count();
 

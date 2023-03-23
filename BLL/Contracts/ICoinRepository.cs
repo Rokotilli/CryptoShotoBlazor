@@ -11,6 +11,6 @@ namespace BLL.Contracts
 {
     public interface ICoinRepository : IGenericRepository<Coin>
     {
-
+        Task<Pagination<Coin>> PagedCoins(int page);
     }
 }

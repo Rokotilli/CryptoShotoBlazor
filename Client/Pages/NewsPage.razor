@@ -2,6 +2,7 @@
 @using Client.Services
 @using DAL.Models
 @inject NewsService newsService
+@inject NavigationManager NavigationManager;
 
 <PageTitle>News</PageTitle>
 
@@ -10,15 +11,26 @@
     <p>Loading...</p>
 }
 else{
-    <section>
+<section>
 	<div class="container">
-			<div class="rightside_home">
-				<div class="news_home">
-					<div class="intro_title_home">
-						@foreach(var item in news){
-							<p>@item.Text</p>
-							<img src="@item.Media"/>
-						}
+		<div class="rightside_home">
+			<div class="news_home">
+				<div class="intro_title_home" style="text-align: center">
+					@foreach(var item in news){
+						<p>@item.Text</p>
+						<img src=@item.Media width="250" height="250" />
+						<hr align="center" width="1200" size="5" color="red" />
+						<br />
+					}
+				</div>
+				<br/>
+				<br/>
+				<br/>
+				<div class="NuberOfPage">
+					@foreach (var item in listofpages)
+					{
+						<button class="btn btn-primary" @onclick="() => OpenPage(item)">@item</button>
+					}
 				</div>
 			</div>
 		</div>
@@ -27,12 +39,20 @@ else{
 }
 
 @code{
-	List<News> news;
+	IEnumerable<News> news;
+	List<int> listofpages=new List<int>();
 
 	protected override async Task OnInitializedAsync(){
-		IEnumerable<News> n = await newsService.GetNews();
+		int countofpages = await newsService.GetCountOfNews();
+		for(int i=1;i<=countofpages;i++){
+			listofpages.Add(i);
+		}
+		await OpenPage();
+	}
 
-		news = n.ToList();
+	public async Task OpenPage(int page = 1)
+	{
+		news = await newsService.GetNews(page);
 	}
 }
 
