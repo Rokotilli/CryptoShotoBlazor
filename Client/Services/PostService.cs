@@ -36,9 +36,9 @@ public class PostService
 		return await httpClient.GetFromJsonAsync<List<Post>>($"api/posts/myposts/{userid}");
 	}
 
-    public async Task<int> GetCountOfPosts()
+    public async Task<int> GetCountOfPosts(int userid)
     {
-        var all = await httpClient.GetFromJsonAsync<IEnumerable<Post>>("api/posts");
+        var all = await httpClient.GetFromJsonAsync<IEnumerable<Post>>($"api/myposts/posts/{userid}");
 
         if (all.Count() % 5 == 0)
             return all.Count() / 5;

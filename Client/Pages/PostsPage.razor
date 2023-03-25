@@ -76,7 +76,7 @@
         }
         else
         {
-            int countofpages = await postService.GetCountOfPosts();
+            int countofpages = await postService.GetCountOfPosts(int.Parse(authState.User.FindFirst("UID").Value));
             for (int i = 1; i <= countofpages; i++)
             {
                 listofpages.Add(i);
