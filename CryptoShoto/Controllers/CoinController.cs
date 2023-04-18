@@ -1,35 +1,35 @@
-﻿using BLL;
-using BLL.Contracts;
-using BLL.Repositories.Pagination;
+﻿using DAL.Contracts;
+using DAL.Repositories.Pagination;
 using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using BLL.Contracts;
 
-namespace CryptoShoto.Controllers
+namespace BLL.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class CoinController : ControllerBase
-    {
-        public readonly IUnitOfWork unitOfWork;
+    {        
+        public readonly ICoinManager CoinManager;
 
-        public CoinController(IUnitOfWork unitOfWork)
+        public CoinController(ICoinManager coinmanager)
         {
-            this.unitOfWork = unitOfWork;
+            CoinManager = coinmanager;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Coin>>> GetCoinsAsync()
         {
-            var model = await unitOfWork.coinRepository.GetAllAsync();
+            var result = await CoinManager.GetCoinsAsync();
 
-            return Ok(model);
+            return Ok(result);
         }
 
         [HttpGet("GetPagedCoins/{page}")]
-        public async Task<ActionResult<Pagination<News>>> GetPagedCoins()
+        public async Task<ActionResult<Pagination<Coin>>> GetPagedCoins()
         {
-            var result = await unitOfWork.coinRepository.PagedCoins(int.Parse(HttpContext.GetRouteValue("page").ToString()));
+            var result = await CoinManager.GetPagedCoins(int.Parse(HttpContext.GetRouteValue("page").ToString()));
 
             return Ok(result);
         }

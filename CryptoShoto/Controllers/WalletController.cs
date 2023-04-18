@@ -1,39 +1,31 @@
 ﻿using AutoMapper;
-using BLL.Contracts;
-using BLL.Repositories.Pagination;
-using CryptoShoto.DTO;
+using DAL.Contracts;
+using DAL.Repositories.Pagination;
+using BLL.DTO;
 using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
+using BLL.Contracts;
 
-namespace CryptoShoto.Controllers
+namespace BLL.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class WalletController : ControllerBase
     {
-        private IMapper mapper;
-        public readonly IUnitOfWork unitOfWork;
+        public readonly IWalletManager walletManager;
 
-        public WalletController(IUnitOfWork unitOfWork, DTOService _mapperService)
+        public WalletController(IWalletManager walletManager)
         {
-            this.unitOfWork = unitOfWork;
-            _mapperService.CreateMapperWallet(ref mapper);
+            this.walletManager = walletManager;
         }
 
         [HttpPost]
         public async Task<ActionResult> AddCoinForUser(WalletDTO wallet)
         {
-            Wallet model = mapper.Map<Wallet>(wallet);
+            var result = await walletManager.AddCoinForUser(wallet);
 
-            try
-            {
-                await unitOfWork.walletRepository.AddAsync(model);
-                await unitOfWork.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
+            if (result == false)
+                return BadRequest();
 
             return Ok();
         }
@@ -41,45 +33,44 @@ namespace CryptoShoto.Controllers
         [HttpPut("countcoin/{id}")]
         public async Task<ActionResult<Wallet>> AddCountOfCointForUser(WalletDTO wallet)
         {
-            Wallet model = mapper.Map<Wallet>(wallet);
-            model.Id = int.Parse(HttpContext.GetRouteValue("id").ToString());
-            await unitOfWork.walletRepository.UpdateAsync(model);
-            await unitOfWork.SaveChangesAsync();
+            var result = await walletManager.AddCountOfCointForUser(wallet, int.Parse(HttpContext.GetRouteValue("userid").ToString()));
+
+            if(result == false)
+                return BadRequest();
 
             return Ok();
         }
 
         [HttpGet("GetIdByUserNameAndCoin/{UserId}/{CoinId}")] 
-        public async Task<ActionResult<int>> GetIdByUserNameAndCoin(int UserId, int CoinId)
+        public async Task<ActionResult<int>> GetIdByUserNameAndCoin()
         {
-            var a = await unitOfWork.walletRepository.GetIdByUserNameAndCoin(UserId, CoinId);
-            return Ok(a);
+            var result = await walletManager.GetIdByUserNameAndCoin(int.Parse(HttpContext.GetRouteValue("UserId").ToString()), int.Parse(HttpContext.GetRouteValue("CoinId").ToString()));
+
+            return Ok(result);
         }
+
         [HttpGet("GetWalletsUser/{page}/{userid}")]
         public async Task<ActionResult<Pagination<Wallet>>> GetWalletsPaginated()
         {
-            var wallets = await unitOfWork.walletRepository.GetWalletsByUserIdPaginated(int.Parse(HttpContext.GetRouteValue("page").ToString()), int.Parse(HttpContext.GetRouteValue("userid").ToString()));
+            var result = await walletManager.GetWalletsPaginated(int.Parse(HttpContext.GetRouteValue("page").ToString()), int.Parse(HttpContext.GetRouteValue("userid").ToString()));
 
-            return Ok(wallets);
+            return Ok(result);
         }
-
 
         [HttpGet("GetWallets/{userid}")]
         public async Task<ActionResult<List<Wallet>>> GetWalletsAllByUser()
         {
-            var wallets = await unitOfWork.walletRepository.GetWalletsByUserId(int.Parse(HttpContext.GetRouteValue("userid").ToString()));
+            var result = await walletManager.GetWalletsAllByUser(int.Parse(HttpContext.GetRouteValue("userid").ToString()));
 
-            List<Wallet> temp = wallets.ToList();
-
-            return Ok(temp);
+            return Ok(result);
         }
 
         [HttpGet("CheckCountOfCoin/{coinid}/{userid}")]
         public async Task<ActionResult<float>> CheckCountOfCoin()
-        {
-            var count = await unitOfWork.walletRepository.GetCountOfCoin(int.Parse(HttpContext.GetRouteValue("userid").ToString()), int.Parse(HttpContext.GetRouteValue("coinid").ToString()));
+        { 
+            var result = await walletManager.CheckCountOfCoin(int.Parse(HttpContext.GetRouteValue("userid").ToString()), int.Parse(HttpContext.GetRouteValue("coinid").ToString()));
 
-            return Ok(count);
+            return Ok(result);
         }
     }
 }

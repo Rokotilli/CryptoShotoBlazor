@@ -1,15 +1,15 @@
-﻿using BLL.Contracts;
-using BLL.Repositories;
+﻿using DAL.Contracts;
+using DAL.Repositories;
 using DAL.DBContext;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using CryptoShoto.DTO;
+using BLL.DTO;
+using BLL.Contracts;
+using BLL.Managers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
-
 builder.Services.AddDbContext<CSContext>(options =>
 {
     string? connectionString = builder.Configuration.GetConnectionString("MSSQLConnection");
@@ -26,6 +26,11 @@ builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<INewsRepository, NewsRepository>();
 builder.Services.AddScoped<IFollowerRepository, FollowerRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<ICoinManager, CoinManager>();
+builder.Services.AddScoped<INewsManager, NewsManager>();
+builder.Services.AddScoped<IPostManager, PostManager>();
+builder.Services.AddScoped<IProfileManager, ProfileManager>();
+builder.Services.AddScoped<IWalletManager, WalletManager>();
 
 builder.Services.AddScoped<DTOService>();
 

@@ -1,6 +1,6 @@
 ﻿using Client.Models;
 using Client.Services;
-using CryptoShoto.DTO;
+using BLL.DTO;
 using DAL.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;

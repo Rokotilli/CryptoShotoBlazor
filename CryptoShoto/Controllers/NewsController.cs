@@ -1,43 +1,42 @@
-﻿using BLL.Contracts;
-using BLL.Repositories.Pagination;
+﻿using DAL.Contracts;
+using DAL.Repositories.Pagination;
 using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
+using BLL.Contracts;
 
-namespace CryptoShoto.Controllers
+namespace BLL.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class NewsController : ControllerBase
     {
-        public readonly IUnitOfWork unitOfWork;
+        public readonly INewsManager NewsManager;
 
-        public NewsController(IUnitOfWork unitOfWork)
+        public NewsController(INewsManager newsManager)
         {
-            this.unitOfWork = unitOfWork;
+            NewsManager = newsManager;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<News>>> GetNewsAsync()
         {
-            var model = await unitOfWork.newsRepository.GetAllAsync();
+            var result = await NewsManager.GetNewsAsync();
 
-            return Ok(model);
+            return Ok(result);
         }
 
         [HttpGet("GetLatestNew")]
         public async Task<ActionResult<News>> GetLatestNew()
         {
-            var model = await unitOfWork.newsRepository.GetLatestNew();
+            var result = await NewsManager.GetLatestNew();
 
-            News temp = await unitOfWork.newsRepository.GetByIdAsync(model);
-
-            return Ok(temp);
+            return Ok(result);
         }
 
         [HttpGet("GetPagedNews/{page}")]
         public async Task<ActionResult<Pagination<News>>> GetPagedNews()
         {
-            var result = await unitOfWork.newsRepository.PagedNews(int.Parse(HttpContext.GetRouteValue("page").ToString()));
+            var result = await NewsManager.GetPagedNews(int.Parse(HttpContext.GetRouteValue("page").ToString()));
 
             return Ok(result);
         }

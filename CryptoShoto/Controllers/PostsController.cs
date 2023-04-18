@@ -1,73 +1,65 @@
-﻿using AutoMapper;
-using BLL.Contracts;
-using BLL.Repositories.Pagination;
-using CryptoShoto.DTO;
+﻿using DAL.Contracts;
+using DAL.Repositories.Pagination;
+using BLL.DTO;
 using DAL.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BLL.Contracts;
 
-namespace CryptoShoto.Controllers
+namespace BLL.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class PostsController : ControllerBase
     {
-        public readonly IUnitOfWork unitOfWork;
-        private IMapper mapper;
+        public readonly IPostManager PostManager;
 
-        public PostsController(IUnitOfWork unitOfWork, DTOService _mapperService)
+        public PostsController(IPostManager PostManager)
         {
-            this.unitOfWork = unitOfWork;
-            _mapperService.CreateMapperPost(ref mapper);
+            this.PostManager = PostManager;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Post>>> GetPosts()
         {
-            var model = await unitOfWork.postRepository.GetAllAsync();
+            var result = await PostManager.GetPosts();
 
-            return Ok(model);
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<ActionResult<PostDTO>> AddPost(PostDTO model)
+        public async Task<ActionResult> AddPost(PostDTO model)
         {
-            Post post = mapper.Map<Post>(model);
+            var result = await PostManager.AddPost(model);
 
-            var modelUser = await unitOfWork.userRepository.GetByIdAsync(model.UserId);
-            
-            post.UserId = modelUser.Id;
-            post.Date = DateTime.Now;
+            if (result == true)
+                return Ok();
 
-            await unitOfWork.postRepository.AddAsync(post);
-            await unitOfWork.SaveChangesAsync();
-
-            return Ok();
+            return BadRequest();
         }
 
 		[HttpDelete("{id}")]
-		public async Task<ActionResult<PostDTO>> DeletePost()
+		public async Task<ActionResult> DeletePost()
         {
-            await unitOfWork.postRepository.DeleteByIdAsync(int.Parse(HttpContext.GetRouteValue("id").ToString()));
-            await unitOfWork.SaveChangesAsync();
+            var result = await PostManager.DeletePost(int.Parse(HttpContext.GetRouteValue("id").ToString()));
 
-            return Ok();
+            if (result == true)
+                return Ok();
+
+            return BadRequest();
 		}
 
         [HttpGet("myposts/{userid}")]
         public async Task<ActionResult<List<Post>>> GetAllPostsByUserId()
         {
-            var model = await unitOfWork.postRepository.PostGetByUserId(int.Parse(HttpContext.GetRouteValue("userid").ToString()));   
+            var result = await PostManager.GetAllPostsByUserId(int.Parse(HttpContext.GetRouteValue("userid").ToString()));
 
-            List<Post> temp = model.ToList();
-
-            return Ok(temp);
+            return Ok(result);
         }
 
         [HttpGet("GetPagedPosts/{page}/{userid}")]
         public async Task<ActionResult<Pagination<Post>>> GetPagedPosts()
         {
-            var result = await unitOfWork.postRepository.PagedPosts(int.Parse(HttpContext.GetRouteValue("page").ToString()), int.Parse(HttpContext.GetRouteValue("userid").ToString()));
+            var result = await PostManager.GetPagedPosts(int.Parse(HttpContext.GetRouteValue("page").ToString()), int.Parse(HttpContext.GetRouteValue("userid").ToString()));
 
             return Ok(result);
         }

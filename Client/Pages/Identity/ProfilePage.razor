@@ -22,6 +22,8 @@
         
         <EditForm EditContext="@editContext" OnSubmit="@ChangeName">
             <ChildContent Context="editContext">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
 
                 <InputText @bind-Value="item.UserName" class="form-control" /><br />
 

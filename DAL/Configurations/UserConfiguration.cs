@@ -42,9 +42,9 @@ namespace DAL.Configurations
             builder.HasIndex(u => u.Email).IsUnique();
 
             builder.HasData(
-                new User { Id = 1, Email = "rost.daskalyuk@gmail.com", Password = "Qwerty123", UserName = "Rostik", RoleId = 1 },
-                new User { Id = 2, Email = "valik.romanyuk2004@gmail.com", Password = "Qwerty123", UserName = "Valik", RoleId = 1 },
-                new User { Id = 3, Email = "valentAnys@gmail.com", Password = "Qwerty123", UserName = "ValentAnys", RoleId = 1 }
+                new User { Id = 1, Email = "rost.daskalyuk@gmail.com", Password = "qwerty123", UserName = "Rostik", RoleId = 1 },
+                new User { Id = 2, Email = "valik.romanyuk2004@gmail.com", Password = "qwerty123", UserName = "Valik", RoleId = 1 },
+                new User { Id = 3, Email = "valentanys@gmail.com", Password = "qwerty123", UserName = "ValentAnys", RoleId = 1 }
             );
         }
     }

@@ -1,4 +1,4 @@
-﻿using CryptoShoto.DTO;
+﻿using BLL.DTO;
 using DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;

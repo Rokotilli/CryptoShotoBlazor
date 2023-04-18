@@ -1,37 +1,31 @@
 ﻿using AutoMapper;
-using BLL.Contracts;
-using CryptoShoto.DTO;
+using DAL.Contracts;
+using BLL.DTO;
 using DAL.Models;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+using BLL.Contracts;
 
-namespace CryptoShoto.Controllers
+namespace BLL.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class ProfileController : ControllerBase
     {
-        public readonly IUnitOfWork unitOfWork;
-		private IMapper mapper;
+        public readonly IProfileManager ProfileManager;
 
-		public ProfileController(IUnitOfWork unitOfWork, DTOService _mapperService)
+        public ProfileController(IProfileManager ProfileManager)
         {
-            this.unitOfWork = unitOfWork;
-            _mapperService.CreateMapperUser(ref mapper);
-		}
+            this.ProfileManager= ProfileManager;
+
+        }
 
         [HttpPost("FoundingUser")]
         public async Task<ActionResult> CheckProfile(LoginDTO log)
         {
-            var model = await unitOfWork.userRepository.SearchByEmail(log.Email);
+            var model = await ProfileManager.CheckProfile(log);
 
-            if (model == null || log.Password != model.Password)
-            {
+            if (model == false)
                 return NotFound();
-            }
 
             return Ok();
         }
@@ -39,18 +33,10 @@ namespace CryptoShoto.Controllers
         [HttpPost("RegUser")]
         public async Task<ActionResult> AddUser(RegistrationDTO reg)
         {
-            var result = await unitOfWork.userRepository.CheckEmailAndUserNameForReg(reg.Email, reg.UserName);
+            var result = await ProfileManager.AddUser(reg);
 
-            if (result != null)
-				return BadRequest(result);
-
-			User temp = mapper.Map<User>(reg);
-
-			temp.RoleId = 1;
-
-			await unitOfWork.userRepository.AddAsync(temp);
-
-			await unitOfWork.SaveChangesAsync();
+            if (result == false)
+                return BadRequest();
 
 			return Ok();
         }
@@ -58,13 +44,10 @@ namespace CryptoShoto.Controllers
         [HttpGet("CheckName/{name}")]
         public async Task<ActionResult> CheckName()
         {
-            
-            var model = await unitOfWork.userRepository.SearchByName(HttpContext.GetRouteValue("name").ToString());
-            
-            if (model == null)
-            {
-                return NotFound();
-            }
+            var result = await ProfileManager.CheckName(HttpContext.GetRouteValue("name").ToString());
+
+            if (result == false)
+                return BadRequest();
 
             return Ok();
         }
@@ -72,18 +55,16 @@ namespace CryptoShoto.Controllers
         [HttpGet("GetUserByEmail/{email}")]
         public async Task<ActionResult<User>> GetNameByEmail()
         {
-            return Ok(await unitOfWork.userRepository.SearchByEmail(HttpContext.GetRouteValue("email").ToString()));
+            return Ok(await ProfileManager.GetNameByEmail(HttpContext.GetRouteValue("email").ToString()));
         }
 
         [HttpPut("ChangeName/{email}")]
         public async Task<ActionResult> ChangeName([FromBody]string username)
         {
-            User user = new User();
-            user = await unitOfWork.userRepository.SearchByEmail(HttpContext.GetRouteValue("email").ToString());
-            user.UserName = username;
+            var result = await ProfileManager.ChangeName(username, HttpContext.GetRouteValue("email").ToString());
 
-            await unitOfWork.userRepository.UpdateAsync(user);
-            await unitOfWork.SaveChangesAsync();
+            if (result == false)
+                return BadRequest();
 
             return Ok();
         }

@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CryptoShoto\CryptoShoto.csproj" />
+    <ProjectReference Include="..\CryptoShoto\WebAPI.csproj" />
     <ProjectReference Include="..\DAL\DAL.csproj" />
   </ItemGroup>
 

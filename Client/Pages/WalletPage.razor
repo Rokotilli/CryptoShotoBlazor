@@ -1,6 +1,6 @@
 ﻿@page "/wallet"
 @using Client.Services
-@using CryptoShoto.DTO;
+@using BLL.DTO;
 @using DAL.Models
 @inject NavigationManager NavigationManager;
 @inject WalletService walletService;
@@ -112,7 +112,9 @@
             coinswithoutpag = temp.ToList();
 
             await OpenPageForUserCoins();
+            Console.WriteLine("2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222");
             await OpenPageForAllCoins();
+            Console.WriteLine("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111");
         }
     }
 
@@ -143,7 +145,10 @@
         wallet.CoinId = coinid;
         wallet.Count = float.Parse(count);
 
-        if (await walletService.BuyCoin(wallet)){}
+        if (await walletService.BuyCoin(wallet)) 
+        { 
+            NavigationManager.NavigateTo("/wallet", forceLoad: true);
+        }
             
         else
         {

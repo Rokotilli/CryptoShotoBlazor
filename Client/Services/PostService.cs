@@ -1,4 +1,4 @@
-﻿using CryptoShoto.DTO;
+﻿using BLL.DTO;
 using DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -38,10 +38,10 @@ public class PostService
 
     public async Task<int> GetCountOfPosts(int userid)
     {
-        var all = await httpClient.GetFromJsonAsync<IEnumerable<Post>>($"api/myposts/posts/{userid}");
+        var all = await httpClient.GetFromJsonAsync<IEnumerable<Post>>($"api/posts/myposts/{userid}");
 
         if (all.Count() % 5 == 0)
             return all.Count() / 5;
-        return all.Count() / 5 + 1;
+        return all.Count() / 5+1;
     }
 }
